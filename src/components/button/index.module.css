@@ -1,0 +1,33 @@
+.wrapper {
+  font: inherit;
+  cursor: pointer;
+  border: none;
+  color: var(--text-color);
+  padding: 8px;
+  border-radius: 5px;
+  position: relative;
+}
+
+.default {
+  background-color: var(--control-color);
+}
+
+.accent {
+  background-color: var(--primary-color);
+}
+
+.error {
+  background-color: var(--error-color);
+}
+
+.wrapper.loading {
+  color: transparent;
+  pointer-events: none;
+}
+
+.wrapper .loader {
+  position: absolute;
+  width: 16px;
+  left: calc(50% - 8px);
+  top: calc(50% - 8px);
+}

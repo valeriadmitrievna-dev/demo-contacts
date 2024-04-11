@@ -1,0 +1,10 @@
+.input {
+  width: 100%;
+  max-width: 195px;
+  font: inherit;
+  border-radius: 5px;
+  border: 1px solid var(--field-border-color);
+  background-color: var(--field-background-color);
+  outline: none;
+  padding: 4px 8px;
+}

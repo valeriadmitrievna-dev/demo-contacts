@@ -1,0 +1,23 @@
+.wrapper {
+  padding-top: 72px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  margin: 16px 0 31px;
+}
+
+.button {
+  min-width: 102px;
+}
+
+.error {
+  color: var(--error-text-color);
+  margin-top: 12px;
+}
