@@ -1,0 +1,42 @@
+.wrapper {
+  color: inherit;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  border-top: 1px solid var(--control-color);
+  border-bottom: 1px solid var(--control-color);
+  transition: 150ms;
+}
+
+.wrapper:not(.active):hover {
+  background-color: rgba(0, 0, 0, 0.03);
+  border-color: transparent;
+}
+
+.wrapper.active {
+  background-color: rgba(0, 0, 0, 0.06);
+  border-color: transparent;
+}
+
+.main .name {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.main .id {
+  font-size: 8px;
+  color: var(--text-secondary-color);
+}
+
+.phones {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-size: 8px;
+}
+
+.phones .extra {
+  color: var(--text-secondary-color);
+}

@@ -1,0 +1,12 @@
+.wrapper {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  height: 100vh;
+}
+
+.loader {
+  width: 32px;
+  border-width: 4px;
+  height: fit-content;
+  margin: auto;
+}

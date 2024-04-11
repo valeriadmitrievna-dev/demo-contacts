@@ -15,6 +15,20 @@ const router = createBrowserRouter([
       {
         path: "contacts",
         element: <ContactsPage />,
+        children: [
+          {
+            index: true,
+            element: <>all</>,
+          },
+          {
+            path: ':id',
+            element: <>contact</>,
+          },
+          {
+            path: 'new',
+            element: <>new</>,
+          },
+        ],
       },
     ],
   },

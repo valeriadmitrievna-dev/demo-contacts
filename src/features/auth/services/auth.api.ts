@@ -1,7 +1,11 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQuery } from "../../../app/api";
-import { AuthPayloadInterface, AuthResponseInterface } from "./auth.types";
-import { setAuth } from "./auth.slice";
+import {
+  AuthPayloadInterface,
+  AuthResponseInterface,
+  UserInterface,
+} from "./auth.types";
+import { setAuth, setUserData } from "./auth.slice";
 
 const authApi = createApi({
   reducerPath: "authApi",
@@ -23,8 +27,19 @@ const authApi = createApi({
         }
       },
     }),
+    getUserData: builder.query<UserInterface, void>({
+      query: () => "/user",
+      async onQueryStarted(_, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          dispatch(setUserData(data));
+        } catch (error) {
+          return;
+        }
+      },
+    }),
   }),
 });
 
-export const { useSignInMutation } = authApi;
+export const { useSignInMutation, useLazyGetUserDataQuery } = authApi;
 export default authApi;

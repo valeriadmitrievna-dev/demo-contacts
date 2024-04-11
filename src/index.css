@@ -1,5 +1,6 @@
 :root {
   --text-color: #000000;
+  --text-secondary-color: #9c9c9c;
   --background-color: #ffffff;
 
   --primary-color: #edf2ff;
@@ -28,4 +29,10 @@ body {
   line-height: 1.21;
   color: var(--text-color);
   background-color: var(--background-color);
+}
+
+#root {
+  height: 100vh;
+  display: flex;
+  overflow: hidden;
 }
