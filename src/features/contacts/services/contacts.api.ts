@@ -4,6 +4,7 @@ import { ContactInterface, ContactsResponse } from "./contacts.types";
 
 const contactsApi = createApi({
   reducerPath: "contactsApi",
+  tagTypes: ["Contacts"],
   baseQuery,
   endpoints: (builder) => ({
     getContacts: builder.query<ContactInterface[], void>({
@@ -13,13 +14,27 @@ const contactsApi = createApi({
           limit: 0,
         },
       }),
+      providesTags: ["Contacts"],
       transformResponse: (data: ContactsResponse) => data.items,
     }),
     getContact: builder.query<ContactInterface, string>({
       query: (id) => "/contacts/" + id,
+      providesTags: ["Contacts"],
+    }),
+    updateContact: builder.mutation<ContactInterface, ContactInterface>({
+      query: (body) => ({
+        url: "/contacts/" + body._id,
+        method: "PUT",
+        body,
+      }),
+      invalidatesTags: ["Contacts"],
     }),
   }),
 });
 
-export const { useGetContactsQuery, useGetContactQuery } = contactsApi;
+export const {
+  useGetContactsQuery,
+  useGetContactQuery,
+  useUpdateContactMutation,
+} = contactsApi;
 export default contactsApi;

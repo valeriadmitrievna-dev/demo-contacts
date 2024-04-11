@@ -1,0 +1,55 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.data {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 4px 0;
+}
+
+.data .input {
+  max-width: calc(100% - 4px - 20px - 4px - 20px);
+}
+
+.value {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.value .actions {
+  gap: 4px;
+}
+
+.button {
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  aspect-ratio: 1 / 1;
+  padding: 4px;
+  color: var(--icon-color);
+}
+
+.button .icon {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+}

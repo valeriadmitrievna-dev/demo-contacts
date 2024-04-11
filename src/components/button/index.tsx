@@ -1,7 +1,8 @@
-import { ButtonHTMLAttributes, FC } from "react";
+import { ButtonHTMLAttributes, FC, MouseEvent } from "react";
 import s from "./index.module.css";
 import cn from "classnames";
 import Loader from "../loader";
+import { useNavigate } from "react-router-dom";
 
 enum Colors {
   default = "default",
@@ -10,9 +11,10 @@ enum Colors {
 }
 
 interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
-  children: string;
+  children: string | JSX.Element;
   color?: keyof typeof Colors;
   loading?: boolean;
+  to?: string;
 }
 
 const Button: FC<Props> = ({
@@ -20,12 +22,21 @@ const Button: FC<Props> = ({
   color = "accent",
   loading = false,
   className,
+  to,
   ...props
 }) => {
+  const navigate = useNavigate();
+
+  const onClick = (event: MouseEvent<HTMLButtonElement>) => {
+    if (to) navigate(to);
+    else props.onClick?.(event);
+  };
+
   return (
     <button
       {...props}
       className={cn(s.wrapper, s[color], { [s.loading]: loading }, className)}
+      onClick={onClick}
     >
       {children}
       {loading && <Loader className={s.loader} />}

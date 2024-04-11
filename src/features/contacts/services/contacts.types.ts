@@ -16,7 +16,7 @@ export interface ContactInterface {
   _id: string;
   name: string;
   role: string;
-  emails: [string];
-  phones: [string];
+  emails: string[];
+  phones: string[];
   bio: string;
 }

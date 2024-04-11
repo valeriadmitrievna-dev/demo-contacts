@@ -18,14 +18,12 @@ const ContactPage: FC = () => {
     return <Loader page />;
   }
 
-  console.log(contact);
-
   return (
     <Wrapper>
       <header className={s.header}>
         <Title>Данные контакта:</Title>
         <div className={s.actions}>
-          <Button>Изменить</Button>
+          <Button to={`/contacts/${contact._id}/edit`}>Изменить</Button>
           <Button color='error'>Удалить</Button>
         </div>
       </header>

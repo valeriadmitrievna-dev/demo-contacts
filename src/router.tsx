@@ -3,6 +3,7 @@ import IndexPage from "./features";
 import AuthPage from "./features/auth";
 import ContactsPage from "./features/contacts";
 import ContactPage from "./features/contacts/modules/contact";
+import ContactForm from "./features/contacts/modules/form";
 
 const router = createBrowserRouter([
   {
@@ -22,11 +23,11 @@ const router = createBrowserRouter([
           },
           {
             path: ":id/edit",
-            element: <>contact edit</>,
+            element: <ContactForm action='edit' />,
           },
           {
             path: "new",
-            element: <>new</>,
+            element: <ContactForm action='create' />,
           },
         ],
       },
