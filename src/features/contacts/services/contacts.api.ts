@@ -15,8 +15,11 @@ const contactsApi = createApi({
       }),
       transformResponse: (data: ContactsResponse) => data.items,
     }),
+    getContact: builder.query<ContactInterface, string>({
+      query: (id) => "/contacts/" + id,
+    }),
   }),
 });
 
-export const { useGetContactsQuery } = contactsApi;
+export const { useGetContactsQuery, useGetContactQuery } = contactsApi;
 export default contactsApi;

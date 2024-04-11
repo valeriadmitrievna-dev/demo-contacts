@@ -2,10 +2,10 @@ import { createBrowserRouter } from "react-router-dom";
 import IndexPage from "./features";
 import AuthPage from "./features/auth";
 import ContactsPage from "./features/contacts";
+import ContactPage from "./features/contacts/modules/contact";
 
 const router = createBrowserRouter([
   {
-    path: "/",
     element: <IndexPage />,
     children: [
       {
@@ -17,15 +17,15 @@ const router = createBrowserRouter([
         element: <ContactsPage />,
         children: [
           {
-            index: true,
-            element: <>all</>,
+            path: ":id",
+            element: <ContactPage />,
           },
           {
-            path: ':id',
-            element: <>contact</>,
+            path: ":id/edit",
+            element: <>contact edit</>,
           },
           {
-            path: 'new',
+            path: "new",
             element: <>new</>,
           },
         ],

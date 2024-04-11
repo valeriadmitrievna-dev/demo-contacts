@@ -20,7 +20,7 @@ const ContactsPage: FC = () => {
   }, [pathname, contacts]);
 
   if (isLoading) {
-    return <Loader className={s.loader} />;
+    return <Loader page />;
   }
 
   return (

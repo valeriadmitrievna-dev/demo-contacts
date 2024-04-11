@@ -4,7 +4,6 @@ import { useAppSelector } from "../app/store";
 import { selectIsAuth } from "./auth/services/auth.selectors";
 import { useLazyGetUserDataQuery } from "./auth/services/auth.api";
 import Loader from "../components/loader";
-import s from "./index.module.css";
 
 const IndexPage: FC = () => {
   const isAuth = useAppSelector(selectIsAuth);
@@ -20,12 +19,14 @@ const IndexPage: FC = () => {
     if (!isAuth && (pathname === "/" || pathname.startsWith("/contacts"))) {
       navigate("/auth", { replace: true });
     }
-
-    if (isAuth) getUserData();
   }, [isAuth, pathname]);
 
+  useEffect(() => {
+    if (isAuth && !user) getUserData();
+  }, [isAuth, user]);
+
   if (isAuth && !user) {
-    return <Loader className={s.loader} />;
+    return <Loader page />;
   }
 
   return (
