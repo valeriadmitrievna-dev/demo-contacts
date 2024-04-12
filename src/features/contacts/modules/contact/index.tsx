@@ -48,9 +48,11 @@ const ContactPage: FC = () => {
             ))}
           </div>
         </Field>
-        <Field title='Биография' className={s.field}>
-          {contact.bio}
-        </Field>
+        {!!contact.bio && (
+          <Field title='Биография' className={s.field}>
+            {contact.bio}
+          </Field>
+        )}
       </div>
     </Wrapper>
   );

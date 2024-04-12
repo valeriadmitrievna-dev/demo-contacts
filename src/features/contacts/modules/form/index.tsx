@@ -5,6 +5,7 @@ import Title from "../../../../components/title";
 import Button from "../../../../components/button";
 import { useNavigate, useParams } from "react-router-dom";
 import {
+  useCreateContactMutation,
   useGetContactQuery,
   useUpdateContactMutation,
 } from "../../services/contacts.api";
@@ -34,6 +35,7 @@ const ContactForm: FC<Props> = ({ action }) => {
   });
 
   const [updateContact, { isLoading: isUpdating }] = useUpdateContactMutation();
+  const [createContact, { isLoading: isCreating }] = useCreateContactMutation();
 
   const [role, setRole] = useState(contact?.role || "");
   const [name, setName] = useState(contact?.name || "");
@@ -42,7 +44,7 @@ const ContactForm: FC<Props> = ({ action }) => {
   const [bio, setBio] = useState(contact?.bio || "");
 
   const [error, setError] = useState<string | null>(null);
-  const [isUpdated, setUpdated] = useState(false);
+  const [isModified, setModified] = useState(false);
 
   const handleChangeRole = (event: ChangeEvent<HTMLInputElement>) => {
     setError(null);
@@ -103,40 +105,88 @@ const ContactForm: FC<Props> = ({ action }) => {
     if (action === "edit" && !!id) {
       navigate(`/contacts/${id}`);
     }
+
+    if (action === "create") {
+      navigate("/contacts");
+    }
   };
 
   const onSubmit = () => {
     setError(null);
-    
+
     if (timeout && timeout.current) {
       clearTimeout(timeout.current);
-      setUpdated(false);
+      setModified(false);
     }
 
-    const body = {
-      ...contact,
-      role,
-      name,
-      phones,
-      emails,
-      bio,
-    };
+    if (!role) {
+      setError("Role is required");
+      return;
+    }
 
-    if (
-      action === "edit" &&
-      !!contact &&
-      JSON.stringify(contact) === JSON.stringify({ ...body, _id: contact?._id })
-    ) {
-      setError("Nothing changed");
+    if (!name) {
+      setError("Name is required");
+      return;
+    }
+
+    const clearPhones = phones.filter((v) => !!v);
+    const clearEmails = emails.filter((v) => !!v);
+
+    if (clearPhones.length) {
+      setPhones(clearPhones);
+    } else {
+      setError("At least 1 phone is required");
+      setPhones([""]);
+      return;
+    }
+
+    if (clearEmails.length) {
+      setEmails(clearEmails);
+    } else {
+      setError("At least 1 email is required");
+      setEmails([""]);
       return;
     }
 
     if (action === "edit" && !!contact) {
+      const body = {
+        ...contact,
+        role,
+        name,
+        phones: clearPhones.length ? clearPhones : [""],
+        emails: emails.filter((v) => !!v),
+        bio,
+      };
+
+      if (
+        JSON.stringify(contact) ===
+        JSON.stringify({ ...body, _id: contact?._id })
+      ) {
+        setError("Nothing changed");
+        return;
+      }
+
       updateContact({ ...body, _id: contact._id }).then(() => {
-        setUpdated(true);
+        setModified(true);
         timeout.current = setTimeout(() => {
-          setUpdated(false);
+          setModified(false);
         }, 1000);
+      });
+    }
+
+    if (action === "create") {
+      const body = {
+        role,
+        name,
+        phones: clearPhones.length ? clearPhones : [""],
+        emails: emails.filter((v) => !!v),
+        bio,
+      };
+
+      createContact(body).then((res) => {
+        if ("data" in res) {
+          navigate(`/contacts/${res.data._id}`);
+        }
       });
     }
   };
@@ -151,7 +201,7 @@ const ContactForm: FC<Props> = ({ action }) => {
     }
   }, [contact]);
 
-  if ((action === "edit" && isLoading) || !contact || id !== contact._id) {
+  if (action === "edit" && (isLoading || !contact || id !== contact._id)) {
     return <Loader page />;
   }
 
@@ -163,8 +213,8 @@ const ContactForm: FC<Props> = ({ action }) => {
           <Button color='default' onClick={onCancel}>
             Отменить
           </Button>
-          <Button onClick={onSubmit} loading={isUpdating}>
-            {isUpdated ? "Сохранено" : "Сохранить"}
+          <Button onClick={onSubmit} loading={isUpdating || isCreating}>
+            {isModified ? "Сохранено" : "Сохранить"}
           </Button>
         </div>
       </header>

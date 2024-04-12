@@ -5,6 +5,7 @@ import { useAppSelector } from "../../../../app/store";
 import { selectUserData } from "../../../auth/services/auth.selectors";
 import { ContactInterface } from "../../services/contacts.types";
 import Contact from "../../../../components/contact";
+import Button from "../../../../components/button";
 
 interface Props {
   contacts: ContactInterface[];
@@ -15,7 +16,10 @@ const Sidebar: FC<Props> = ({ contacts }) => {
 
   return (
     <aside className={s.wrapper}>
-      <Title className={s.title}>Контакты:</Title>
+      <header className={s.header}>
+        <Title>Контакты:</Title>
+        <Button to='/contacts/new'>Создать контакт</Button>
+      </header>
       <div className={s.list}>
         {contacts.map((contact) => (
           <Contact key={contact._id} {...contact} className={s.contact} />

@@ -29,6 +29,17 @@ const contactsApi = createApi({
       }),
       invalidatesTags: ["Contacts"],
     }),
+    createContact: builder.mutation<
+      ContactInterface,
+      Omit<ContactInterface, "_id">
+    >({
+      query: (body) => ({
+        url: "/contacts/",
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["Contacts"],
+    }),
   }),
 });
 
@@ -36,5 +47,6 @@ export const {
   useGetContactsQuery,
   useGetContactQuery,
   useUpdateContactMutation,
+  useCreateContactMutation,
 } = contactsApi;
 export default contactsApi;
