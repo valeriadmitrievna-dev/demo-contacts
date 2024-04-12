@@ -4,10 +4,12 @@ import AuthPage from "./features/auth";
 import ContactsPage from "./features/contacts";
 import ContactPage from "./features/contacts/modules/contact";
 import ContactForm from "./features/contacts/modules/form";
+import Error from "./features/error";
 
 const router = createBrowserRouter(
   [
     {
+      path: "/",
       element: <IndexPage />,
       children: [
         {
@@ -33,6 +35,7 @@ const router = createBrowserRouter(
           ],
         },
       ],
+      errorElement: <Error />,
     },
   ],
   { basename: "/demo-contacts/" }
