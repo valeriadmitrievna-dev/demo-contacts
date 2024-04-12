@@ -1,0 +1,57 @@
+@keyframes open {
+  from {
+    opacity: 0;
+    visibility: hidden;
+  }
+  to {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+@keyframes close {
+  from {
+    opacity: 1;
+    visibility: visible;
+  }
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+.overlay {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #0000003d;
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation-name: open;
+  animation-fill-mode: forwards;
+}
+
+.overlay.unmounting {
+  animation-name: close;
+}
+
+.dialog {
+  padding: 16px 12px 8px;
+  background-color: var(--background-color);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+  border-radius: 5px;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}

@@ -7,7 +7,6 @@
 
 .header {
   padding: 12px 16px;
-  margin-bottom: 14px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -33,10 +32,6 @@
 
 .list::-webkit-scrollbar-thumb {
   background-color: var(--control-color);
-}
-
-.contact:first-child {
-  border-top: none;
 }
 
 .user {

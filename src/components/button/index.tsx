@@ -4,7 +4,7 @@ import cn from "classnames";
 import Loader from "../loader";
 import { useNavigate } from "react-router-dom";
 
-enum Colors {
+enum ButtonColors {
   default = "default",
   accent = "accent",
   error = "error",
@@ -12,7 +12,7 @@ enum Colors {
 
 interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: string | JSX.Element;
-  color?: keyof typeof Colors;
+  color?: keyof typeof ButtonColors;
   loading?: boolean;
   to?: string;
 }

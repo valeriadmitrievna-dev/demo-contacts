@@ -22,7 +22,7 @@ const Sidebar: FC<Props> = ({ contacts }) => {
       </header>
       <div className={s.list}>
         {contacts.map((contact) => (
-          <Contact key={contact._id} {...contact} className={s.contact} />
+          <Contact key={contact._id} {...contact} />
         ))}
       </div>
       <div className={s.user}>

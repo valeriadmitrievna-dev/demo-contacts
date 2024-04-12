@@ -6,6 +6,7 @@
   padding: 8px 12px;
   border-radius: 5px;
   position: relative;
+  transition: 150ms;
 }
 
 .default {
@@ -30,4 +31,8 @@
   width: 16px;
   left: calc(50% - 8px);
   top: calc(50% - 8px);
+}
+
+.wrapper:hover {
+  filter: saturate(500%);
 }
