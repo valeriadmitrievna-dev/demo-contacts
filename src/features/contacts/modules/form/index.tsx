@@ -1,4 +1,4 @@
-import { ChangeEvent, FC, useEffect, useState } from "react";
+import { ChangeEvent, FC, useEffect, useRef, useState } from "react";
 import s from "./index.module.css";
 import Wrapper from "../wrapper";
 import Title from "../../../../components/title";
@@ -27,6 +27,7 @@ interface Props {
 const ContactForm: FC<Props> = ({ action }) => {
   const { id = "" } = useParams();
   const navigate = useNavigate();
+  const timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const { data: contact = null, isLoading } = useGetContactQuery(id, {
     skip: !id || action === "create",
@@ -40,15 +41,21 @@ const ContactForm: FC<Props> = ({ action }) => {
   const [emails, setEmails] = useState(contact?.emails || [""]);
   const [bio, setBio] = useState(contact?.bio || "");
 
+  const [error, setError] = useState<string | null>(null);
+  const [isUpdated, setUpdated] = useState(false);
+
   const handleChangeRole = (event: ChangeEvent<HTMLInputElement>) => {
+    setError(null);
     setRole(event.target.value);
   };
 
   const handleChangeName = (event: ChangeEvent<HTMLInputElement>) => {
+    setError(null);
     setName(event.target.value);
   };
 
   const handleChangePhone = (value: string, editId: number) => {
+    setError(null);
     setPhones((curr) =>
       curr.map((phone, id) => {
         if (id === editId) return value;
@@ -58,14 +65,17 @@ const ContactForm: FC<Props> = ({ action }) => {
   };
 
   const addPhone = () => {
+    setError(null);
     setPhones((curr) => [...curr, ""]);
   };
 
   const removePhone = (removeId: number) => {
+    setError(null);
     setPhones((curr) => curr.filter((_, id) => id !== removeId));
   };
 
   const handleChangeEmail = (value: string, editId: number) => {
+    setError(null);
     setEmails((curr) =>
       curr.map((phone, id) => {
         if (id === editId) return value;
@@ -75,14 +85,17 @@ const ContactForm: FC<Props> = ({ action }) => {
   };
 
   const addEmail = () => {
+    setError(null);
     setEmails((curr) => [...curr, ""]);
   };
 
   const removeEmail = (removeId: number) => {
+    setError(null);
     setEmails((curr) => curr.filter((_, id) => id !== removeId));
   };
 
   const handleChangeBio = (event: ChangeEvent<HTMLTextAreaElement>) => {
+    setError(null);
     setBio(event.target.value);
   };
 
@@ -93,7 +106,15 @@ const ContactForm: FC<Props> = ({ action }) => {
   };
 
   const onSubmit = () => {
+    setError(null);
+    
+    if (timeout && timeout.current) {
+      clearTimeout(timeout.current);
+      setUpdated(false);
+    }
+
     const body = {
+      ...contact,
       role,
       name,
       phones,
@@ -101,8 +122,22 @@ const ContactForm: FC<Props> = ({ action }) => {
       bio,
     };
 
+    if (
+      action === "edit" &&
+      !!contact &&
+      JSON.stringify(contact) === JSON.stringify({ ...body, _id: contact?._id })
+    ) {
+      setError("Nothing changed");
+      return;
+    }
+
     if (action === "edit" && !!contact) {
-      updateContact({ ...body, _id: contact._id });
+      updateContact({ ...body, _id: contact._id }).then(() => {
+        setUpdated(true);
+        timeout.current = setTimeout(() => {
+          setUpdated(false);
+        }, 1000);
+      });
     }
   };
 
@@ -129,7 +164,7 @@ const ContactForm: FC<Props> = ({ action }) => {
             Отменить
           </Button>
           <Button onClick={onSubmit} loading={isUpdating}>
-            Сохранить
+            {isUpdated ? "Сохранено" : "Сохранить"}
           </Button>
         </div>
       </header>
@@ -216,6 +251,7 @@ const ContactForm: FC<Props> = ({ action }) => {
           />
         </Field>
       </div>
+      {error && <p className={s.error}>{error}</p>}
     </Wrapper>
   );
 };
