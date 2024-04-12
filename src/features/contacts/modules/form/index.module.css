@@ -54,8 +54,11 @@
   aspect-ratio: 1 / 1;
 }
 
-.error {
+.errors {
   margin-top: 12px;
   color: var(--error-text-color);
   font-weight: 500;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }

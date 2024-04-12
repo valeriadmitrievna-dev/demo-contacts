@@ -15,6 +15,7 @@ import PlusIcon from "../../../../icons/plus.svg?react";
 import MinusIcon from "../../../../icons/minus.svg?react";
 import Loader from "../../../../components/loader";
 import TextArea from "../../../../components/text-area";
+import { isEmailValid } from "../../../../utils/helpers";
 
 enum Action {
   edit = "edit",
@@ -43,41 +44,48 @@ const ContactForm: FC<Props> = ({ action }) => {
   const [emails, setEmails] = useState(contact?.emails || [""]);
   const [bio, setBio] = useState(contact?.bio || "");
 
-  const [error, setError] = useState<string | null>(null);
+  const [errors, setErrors] = useState<string[]>([]);
   const [isModified, setModified] = useState(false);
 
   const handleChangeRole = (event: ChangeEvent<HTMLInputElement>) => {
-    setError(null);
+    setErrors([]);
     setRole(event.target.value);
   };
 
   const handleChangeName = (event: ChangeEvent<HTMLInputElement>) => {
-    setError(null);
+    setErrors([]);
     setName(event.target.value);
   };
 
   const handleChangePhone = (value: string, editId: number) => {
-    setError(null);
+    setErrors([]);
+
     setPhones((curr) =>
       curr.map((phone, id) => {
-        if (id === editId) return value;
+        if (id === editId)
+          return value
+            .replace(/\D/g, "")
+            .replace(/^(\d)/, "($1")
+            .replace(/^(\(\d{3})(\d)/, "$1) $2")
+            .replace(/(\d{3})(\d{1,4})/, "$1-$2")
+            .replace(/(-\d{4})\d+?$/, "$1");
         else return phone;
       })
     );
   };
 
   const addPhone = () => {
-    setError(null);
+    setErrors([]);
     setPhones((curr) => [...curr, ""]);
   };
 
   const removePhone = (removeId: number) => {
-    setError(null);
+    setErrors([]);
     setPhones((curr) => curr.filter((_, id) => id !== removeId));
   };
 
   const handleChangeEmail = (value: string, editId: number) => {
-    setError(null);
+    setErrors([]);
     setEmails((curr) =>
       curr.map((phone, id) => {
         if (id === editId) return value;
@@ -87,17 +95,17 @@ const ContactForm: FC<Props> = ({ action }) => {
   };
 
   const addEmail = () => {
-    setError(null);
+    setErrors([]);
     setEmails((curr) => [...curr, ""]);
   };
 
   const removeEmail = (removeId: number) => {
-    setError(null);
+    setErrors([]);
     setEmails((curr) => curr.filter((_, id) => id !== removeId));
   };
 
   const handleChangeBio = (event: ChangeEvent<HTMLTextAreaElement>) => {
-    setError(null);
+    setErrors([]);
     setBio(event.target.value);
   };
 
@@ -112,7 +120,8 @@ const ContactForm: FC<Props> = ({ action }) => {
   };
 
   const onSubmit = () => {
-    setError(null);
+    setErrors([]);
+    const errors = [];
 
     if (timeout && timeout.current) {
       clearTimeout(timeout.current);
@@ -120,13 +129,11 @@ const ContactForm: FC<Props> = ({ action }) => {
     }
 
     if (!role) {
-      setError("Role is required");
-      return;
+      errors.push("Role is required");
     }
 
     if (!name) {
-      setError("Name is required");
-      return;
+      errors.push("Name is required");
     }
 
     const clearPhones = phones.filter((v) => !!v);
@@ -134,17 +141,32 @@ const ContactForm: FC<Props> = ({ action }) => {
 
     if (clearPhones.length) {
       setPhones(clearPhones);
+
+      clearPhones.forEach((phone, id) => {
+        if (phone.replace(/\D/g, "").length !== 10) {
+          errors.push(`Phone #${id + 1} isn't valid`);
+        }
+      });
     } else {
-      setError("At least 1 phone is required");
+      errors.push("At least 1 phone is required");
       setPhones([""]);
-      return;
     }
 
     if (clearEmails.length) {
       setEmails(clearEmails);
+
+      clearEmails.forEach((email, id) => {
+        if (!isEmailValid(email)) {
+          errors.push(`Email #${id + 1} isn't valid`);
+        }
+      });
     } else {
-      setError("At least 1 email is required");
+      errors.push("At least 1 email is required");
       setEmails([""]);
+    }
+
+    if (errors.length) {
+      setErrors(errors);
       return;
     }
 
@@ -153,8 +175,8 @@ const ContactForm: FC<Props> = ({ action }) => {
         ...contact,
         role,
         name,
-        phones: clearPhones.length ? clearPhones : [""],
-        emails: emails.filter((v) => !!v),
+        phones: clearPhones,
+        emails: clearEmails,
         bio,
       };
 
@@ -162,7 +184,7 @@ const ContactForm: FC<Props> = ({ action }) => {
         JSON.stringify(contact) ===
         JSON.stringify({ ...body, _id: contact?._id })
       ) {
-        setError("Nothing changed");
+        setErrors(["Nothing changed"]);
         return;
       }
 
@@ -178,8 +200,8 @@ const ContactForm: FC<Props> = ({ action }) => {
       const body = {
         role,
         name,
-        phones: clearPhones.length ? clearPhones : [""],
-        emails: emails.filter((v) => !!v),
+        phones: clearPhones,
+        emails: clearEmails,
         bio,
       };
 
@@ -192,14 +214,24 @@ const ContactForm: FC<Props> = ({ action }) => {
   };
 
   useEffect(() => {
-    if (contact) {
+    setErrors([]);
+
+    if (contact && action === "edit") {
       setRole(contact.role);
       setName(contact.name);
       setPhones(contact.phones);
       setEmails(contact.emails);
       setBio(contact.bio);
     }
-  }, [contact]);
+
+    if (action === "create") {
+      setRole("");
+      setName("");
+      setPhones([""]);
+      setEmails([""]);
+      setBio("");
+    }
+  }, [contact, action]);
 
   if (action === "edit" && (isLoading || !contact || id !== contact._id)) {
     return <Loader page />;
@@ -301,7 +333,13 @@ const ContactForm: FC<Props> = ({ action }) => {
           />
         </Field>
       </div>
-      {error && <p className={s.error}>{error}</p>}
+      {!!errors.length && (
+        <div className={s.errors}>
+          {errors.map((error, errorId) => (
+            <p key={"error" + errorId}>{error}</p>
+          ))}
+        </div>
+      )}
     </Wrapper>
   );
 };
